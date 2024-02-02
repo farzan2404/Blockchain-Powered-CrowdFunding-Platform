@@ -1,0 +1,8 @@
+npx thirdweb@latest create --contract
+
+cd ..
+npx thirdweb create --app
+npm install react-router-dom
+npm run dev
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
