@@ -1,0 +1,20 @@
+.dropzone-container {
+    background-color: aliceblue;
+    border: 2px dashed #eff7ff;
+    border-radius: 4px;
+    padding: 10px; 
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+
+.dropzone-text {
+    font-size: 22px;
+    color: rgb(28, 15, 15);
+    margin-top: 10px;
+}
+
+.dropzone-container:hover {
+    background-color: #CEE6F3;
+}

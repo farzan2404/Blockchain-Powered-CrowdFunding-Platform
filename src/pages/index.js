@@ -1,0 +1,13 @@
+export { default as Home } from "./Home";
+export { default as Profile } from "./Profile";
+export { default as CreateCampaign } from "./CreateCampaign";
+export { default as CampaignDetails } from "./CampaignDetails";
+export { default as Register } from "./Register";
+export { default as Login } from "./Login";
+export {default as Document} from "./Document";
+export {default as VerifierLogin} from "./VerifierLogin";
+export {default as VerifierProfile} from "./VerifierProfile";
+export {default as PendingDoc} from "./PendingDoc";
+export {default as ApprovedDoc} from "./ApprovedDoc";
+export {default as RejectedDoc} from "./RejectedDoc";
+export {default as Requesters} from "./Requesters";
