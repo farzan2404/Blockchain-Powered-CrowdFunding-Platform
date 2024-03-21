@@ -17,7 +17,7 @@ const VerifierLogin = () => {
     if (!success) {
       alert('You are not a verifier');
     } else {
-      navigate("/requesters");
+      navigate("/verifier-profile");
     }
       
     } catch (error) {

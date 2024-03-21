@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useStateContext } from "../context";
 import { DisplayCampaigns } from "../components";
 
-const Home = () => {
-  const [isLoading, setIsLoading] = useState(false);
+const Home = ({filteredCampaigns, isLoading, setIsLoading}) => {
+  // const [isLoading, setIsLoading] = useState(false);
   const [campaigns, setCampaigns] = useState([]);
-  // campaigns are to be fetched from the smart contract.
   const { address, contract, getCampaigns } = useStateContext();
 
   const fetchCampaigns = async () => {
@@ -23,7 +22,7 @@ const Home = () => {
     <DisplayCampaigns
       title="All Campaigns"
       isLoading={isLoading}
-      campaigns={campaigns}
+      campaigns={filteredCampaigns.length > 0 ? filteredCampaigns : campaigns}
     />
     // we created to use this compo from within our profile pg.
   );

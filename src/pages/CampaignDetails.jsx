@@ -14,6 +14,7 @@ const CampaignDetails = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [amount, setAmount] = useState('');
+  const [name, setName] = useState('');
   const [donators, setDonators] = useState([]);
 
   const remainingDays = Math.abs(daysLeft(state.deadline));
@@ -32,8 +33,6 @@ const CampaignDetails = () => {
         setIsLoading(true);
 
         await deleteCampaigns(state.pId);
-
-        navigate('/');
             
         setIsLoading(false);
 
@@ -50,11 +49,21 @@ const CampaignDetails = () => {
 
   const handleDonate = async () => {
     setIsLoading(true);
+  const donorName = name.length === 0 ? address : name;
 
-    await donate(state.pId, amount); 
-
-    navigate('/')
+  if (amount.length === 0 || isNaN(amount)) {
+    alert("Invalid number");
     setIsLoading(false);
+    return;
+  }
+
+  const data = await donate(state.pId, amount, donorName);
+  console.log(data);
+  console.log(data.gasUsed);
+  console.log(data.receipt.transactionHash);
+
+  navigate('/transaction', { state: data });
+  setIsLoading(false);
   }
 
   return (
@@ -133,6 +142,17 @@ const CampaignDetails = () => {
               Fund the campaign
             </p>
             <div className="mt-[30px]">
+
+              <div className='pb-3'>
+              <input 
+                type="string"
+                placeholder="Enter your name (Optional)"
+                step="0.01"
+                className="w-full py-[10px] sm:px-[20px] px-[15px] outline-none border-[1px] border-[#3a3a43] bg-transparent font-epilogue text-white text-[18px] leading-[30px] placeholder:text-[#4b5264] rounded-[10px]"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              </div>
               <input 
                 type="number"
                 placeholder="ETH 0.1"

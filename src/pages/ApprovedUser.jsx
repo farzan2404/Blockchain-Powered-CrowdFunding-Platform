@@ -3,24 +3,23 @@ import { useStateContext } from "../context";
 import { useNavigate } from "react-router-dom";
 import { CustomButton } from "../components";
 
-const Requesters = () => {
-  const [pendingDocs, setPendingDocs] = useState([]);
-  const { getPendingDocs } = useStateContext();
+const ApprovedUser = () => {
+  const [approvedDocuments, setApprovedDocs] = useState([]);
+  const { getApprovedDocs } = useStateContext();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchPendingDocs = async () => {
+    const fetchApprovedDocs = async () => {
       try {
-        const pendingDocuments = await getPendingDocs();
-        setPendingDocs(pendingDocuments);
+        const approvedDocuments = await getApprovedDocs();
+        setApprovedDocs(approvedDocuments);
       } catch (error) {
         console.error('Error fetching pending documents:', error);
       }
     };
 
-    // Call the fetchPendingDocs function
-    fetchPendingDocs();
-  }, []); // Empty dependency array to run the effect only once on mount
+    fetchApprovedDocs();
+  }, []); 
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -39,7 +38,7 @@ const Requesters = () => {
           />
         </div>
       </div>
-      {pendingDocs.length > 0 ? (
+      {approvedDocuments.length > 0 ? (
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
@@ -55,7 +54,7 @@ const Requesters = () => {
             </tr>
           </thead>
           <tbody>
-            {pendingDocs.map((document, index) => (
+            {approvedDocuments.map((document, index) => (
               <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                 <th scope="row" className="flex items-center px-6 py-4 text-gray-900 whitespace-nowrap dark:text-white">
                   <div className="ps-3">
@@ -68,7 +67,7 @@ const Requesters = () => {
                   title={"View Documents"}
                   styles={"bg-[#0B60B0]"}
                   handleClick={() => {
-                    navigate("/pending-Doc", { state: { user: document } });
+                    navigate("/approved-Doc", { state: { user: document } });
                   }}
                 />
               </tr>
@@ -76,10 +75,10 @@ const Requesters = () => {
           </tbody>
         </table>
       ) : (
-        <div className="text-center text-gray-500 dark:text-gray-400">No pending documents</div>
+        <div className="text-center text-gray-500 dark:text-gray-400">No Approved documents</div>
       )}
     </div>
   );
 };
 
-export default Requesters;
+export default ApprovedUser;

@@ -6,11 +6,20 @@ import { navlinks } from "../constants";
 const Icon = ({ styles, name, imgUrl, isActive, disabled, handleClick }) => (
   <div
     className={`w-[48px] h-[48px] rounded-[10px] ${
-      isActive && isActive === name && "bg-[#2c2f32]"
+      isActive && isActive === name ? "bg-[#2c2f32]" : ""
     } flex justify-center items-center ${
-      !disabled && "cursor - pointer"
+      !disabled ? "cursor-pointer" : ""
     } ${styles}`}
     onClick={handleClick}
+    style={{
+      transition: "transform 0.2s ease-in-out",
+    }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.transform = "scale(1.3)";
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.transform = "scale(1)";
+    }}
   >
     {!isActive ? (
       <img src={imgUrl} alt="fund_logo" className="w-1/2 h-1/2" />
@@ -18,11 +27,12 @@ const Icon = ({ styles, name, imgUrl, isActive, disabled, handleClick }) => (
       <img
         src={imgUrl}
         alt="fund_logo"
-        className={`-1/2 h-1/2 ${isActive !== name && "grayscale"}`}
+        className={`-1/2 h-1/2 ${isActive !== name ? "grayscale" : ""}`}
       />
     )}
   </div>
 );
+
 
 const Sidebar = () => {
   // allow to traverse to different pages.
@@ -41,17 +51,17 @@ const Sidebar = () => {
       >
         <div className="flex flex-col justify-center item-center gap-3">
           {navlinks.map((Link) => (
-            <Icon
-              key={Link.name}
-              {...Link}
-              isActive={isActive}
-              handleClick={() => {
-                if (!Link.disabled) {
-                  setIsActive(Link.name);
-                  navigate(Link.link);
-                }
-              }}
-            />
+          <Icon
+            key={Link.name}
+            {...Link}
+            isActive={isActive}
+            handleClick={() => {
+              if (!Link.disabled) {
+                setIsActive(Link.name);
+                navigate(Link.link);
+              }
+            }}
+          />
           ))}
         </div>
         <Icon styles={`bg-[#1c1c24] shadow-secondary`} imgUrl={sun} />

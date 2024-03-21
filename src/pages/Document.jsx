@@ -37,20 +37,17 @@ const UploadDoc = () => {
 
     return (
         <div>
-            <h2 style={{ color: 'red', fontSize:'18px' }}>Required Documents* </h2>
-            <h2 style={{ color: 'white', fontSize:'17px' }}>1). Aadhaar Card</h2>
-            <h2 style={{ color: 'white', fontSize:'17px' }}>2). Pan Card</h2>
-            <h2 style={{ color: 'white', fontSize:'17px', marginBottom: '20px' }}> 3). Medical bill, Budget Breakdown, Testimonials or any other relevant document</h2>
-            <div {...getRootProps()} className="dropzone-container">
+            <h2 className='styleIt' style={{ color: 'lightBlue', fontSize:'60px', fontFamily:'sans-serif'}}>Upload document for verification</h2>
+            <h2 className='styleIt' style={{ color: 'white', fontSize:'25px', marginBottom: '60px', fontFamily:'ui-serif' }}> Medical bill, Budget Breakdown, Testimonials or any other relevant document</h2>
+            <div {...getRootProps()} className="dropzone-container styleIt">
                 <input {...getInputProps()} />
-                <p className="dropzone-text">Choose the files</p>
+                <p className="dropzone-text styleIt" style={{ fontSize: '17px' }}>Choose a Document</p>
             </div>
             <div>
                 {uris.map((uri) => (
                     <MediaRenderer key={uri} src={uri} alt="Image" width = "400px"/>
                 ))}
             </div>
-            <h2 style={{ color: 'white', fontSize:'15px'}}>Note: Minimum 3 documents mandatory</h2>
         </div>
     );
 };

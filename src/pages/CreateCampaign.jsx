@@ -5,40 +5,60 @@ import { ethers } from "ethers";
 import { useStateContext } from "../context";
 import { money } from "../assets";
 import { CustomButton, FormField, Loader} from "../components";
-import { checkIfImage } from "../utils";
+import { checkIfImage, daysLeft } from "../utils";
 
 const createCampaigns = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const { createCampaigns } = useStateContext();
+  const { createCampaigns, verifierPayment } = useStateContext();
   const [form, setForm] = useState({
     name: "",
     title: "", 
     description: "",
     target: "",
+    fees:"",
     deadline: "",
     image: "",
     category: "",
   });
+
 
 // Implementing below one, just to update relevant fields in the form, and not others.
   const handleFormFieldChange = (fieldName, e) => {
     setForm({ ...form, [fieldName]: e.target.value });
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    checkIfImage(form.image, async (exists) => {
-      if (exists) {
+    const daysRemaining = daysLeft(form.deadline)
+
+    if(daysRemaining <= 0)
+    {
+      window.alert("Deadline cannot be in past")
+      setForm({...form, deadline:""});
+      return navigate("/create-campaign");
+    }
+
+      checkIfImage(form.image, async (exists) => {
+      if (exists) 
+      {
         setIsLoading(true);
-        await createCampaigns({
-          ...form,
-          target: ethers.utils.parseUnits(form.target, 18),
-        });
+
+        const fees = ((form.target * 2) / 100).toString();
+
+        await verifierPayment(fees);
+
+        await createCampaigns({...form, 
+        target: ethers.utils.parseEther(form.target, 18), 
+        fees: ethers.utils.parseEther(((form.target * 2) / 100).toString(), 18)});
+
         setIsLoading(false);
         navigate("/");
-      } else {
+      } 
+      else 
+      {
         alert("Provide valid image URL");
         setForm({ ...form, image: "" });
       }
@@ -98,7 +118,7 @@ const createCampaigns = () => {
           <FormField
             labelName="Goal *"
             placeholder="ETH 0.50"
-            inputType="text"
+            inputType="number"
             value={form.target}
             handleChange={(e) => handleFormFieldChange("target", e)}
           />
@@ -110,6 +130,14 @@ const createCampaigns = () => {
             handleChange={(e) => handleFormFieldChange("deadline", e)}
           />
         </div>
+
+          <FormField
+          labelName="Platform fees *"
+          placeholder="ETH 0.50"
+          inputType="number"
+          value={(form.target) * 2 / 100} 
+          handleChange={(e) => handleFormFieldChange("fees", e)}
+        />
 
         <FormField
           labelName="Campaign image *"

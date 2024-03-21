@@ -16,7 +16,7 @@ const StateContext = createContext();
 export const StateContextProvider = ({ children }) => {
   // connecting our smart contract with  its address below
   const { contract } = useContract(
-    "0x6c3238989eE67a66a1E8F8fD051B56ce886711DD"
+    "0x775044e67f6f4a4C90693Bc5C0f874AfB2a4B80e"
   );
 
   const { mutateAsync: createCampaigns } = useContractWrite(
@@ -39,11 +39,20 @@ export const StateContextProvider = ({ children }) => {
   "userLogin"
   );
 
+  const { mutateAsync: updatePassword } = useContractWrite(
+    contract, 
+  "updatePassword"
+  );
+
     const {mutateAsync: verifierLogin} = useContractWrite(
       contract,
     "verifierLogin"
   );
 
+      const {mutateAsync: verifyDocument} = useContractWrite(
+      contract,
+    "verifyDocument"
+  );
 
   const address = useAddress();
   const connect = useMetamask();
@@ -87,6 +96,22 @@ const loginUser = async (_name, _password) => {
     }
 };
 
+const passwordUpdate = async (_name, _newPassword) => {
+
+  try {
+    const data = await updatePassword({
+      args:[_name, _newPassword],
+    });
+    console.log("Password Reset Completed", data);
+    return true;
+  }
+
+  catch (error){
+    console.error("Event Unsuccesful", error);
+    return false;
+  }
+}
+
 const loginVerifier = async (_address) => {
     try {
         const data = await verifierLogin({
@@ -102,6 +127,13 @@ const loginVerifier = async (_address) => {
     }
 };
 
+const isSignUp = async(_username, _address) => {
+
+    const data = await contract.call('isUserRegistered', [_username,_address]);
+
+    return data;
+}
+
 const getUsernameAddress = async (_username) => {
     try {
         const address = await contract.call('getAddressByUsername', [_username]);
@@ -111,6 +143,17 @@ const getUsernameAddress = async (_username) => {
         return null;
     }
 };
+
+  const getUserDocumentStatus = async(_address) => {
+    try {
+      const status = await contract.call('getUserDocumentStatus',[_address]);
+      return status;
+    }
+    catch (error) {
+        console.error("Failed to fetch address by username:", error);
+        return null;
+    }
+  };
 
 
  const uploadUserDocument = async (_address, _documentAddresses) => {
@@ -126,11 +169,24 @@ const getUsernameAddress = async (_username) => {
     }
   };
 
+    const documentVerify = async(_address, _id, _newStatus) =>{
+      try {
+        const data = await verifyDocument({
+          args: [_address, _id, _newStatus],
+        });
+        console.log("Operation successful", data);
+        return true;
+      }
+      catch (error) {
+      console.error("Error", error);
+    }
+    };
 
 
   // With this function we finally create our campaign
   const publishCampaign = async (form) => {
     try {
+      
       const data = await createCampaigns({
         args: [
           address, // owner
@@ -138,6 +194,7 @@ const getUsernameAddress = async (_username) => {
           form.title, // title
           form.description, // description
           form.target,
+          form.fees,
           new Date(form.deadline).getTime(), // deadline,z
           form.image,
           form.category,
@@ -157,9 +214,11 @@ const getUsernameAddress = async (_username) => {
 
     const parsedCampaigns = campaigns.map((campaign, i) => ({
       owner: campaign.owner,
+      name: campaign.name,
       title: campaign.title,
       description: campaign.description,
       target: ethers.utils.formatEther(campaign.target.toString()), 
+      fees: ethers.utils.formatEther(campaign.fees.toString()), 
       deadline: campaign.deadline.toNumber(),
       amtCollected: ethers.utils.formatEther(campaign.amountCollected.toString()), 
       image: campaign.image,
@@ -169,7 +228,6 @@ const getUsernameAddress = async (_username) => {
 
     return parsedCampaigns;
   };
-
 
 
   const getAllDocuments = async () => 
@@ -201,11 +259,27 @@ const getUsernameAddress = async (_username) => {
       return pendingDocs;
   }
 
-  const getUserDocuments = async() =>
+    const getApprovedDocs = async() =>
   {
-    
+    const allDocuments = await getAllDocuments();
+    console.log(allDocuments);
+
+    const approvedDocs = allDocuments.filter(
+      (document) => document.status === 1);
+
+      return approvedDocs;
   }
 
+    const getRejectedDocs = async() =>
+  {
+    const allDocuments = await getAllDocuments();
+    console.log(allDocuments);
+
+    const rejectedDocs = allDocuments.filter(
+      (document) => document.status === 2);
+
+      return rejectedDocs;
+  }
 
   const getUserCampaigns = async () => {
     const allCampaigns = await getCampaigns();
@@ -216,11 +290,33 @@ const getUsernameAddress = async (_username) => {
     return filteredCampaigns;
   };
 
-  const donate = async (pId, amount) => {
-    const data = await contract.call('donateToCampaigns', [pId], { value: ethers.utils.parseEther(amount)});
+  const filterCampaignsByCategory = async(searchInput) => {
+    const allCampaigns = await getCampaigns();
 
-    return data;
+    const filteredCampaigns = allCampaigns.filter(
+      (campaign) => campaign.category.toLowerCase().includes(searchInput.toLowerCase()));
+
+      return filteredCampaigns;
   }
+
+const donate = async (pId, amount, name) => {
+
+  const data = await contract.call('donateToCampaigns', [pId, name], { value: ethers.utils.parseEther(amount) });
+
+  return data;
+}
+
+const verifierPayment = async(fees) => {
+  try {
+    const data = await contract.call('paymentToVerifier',[], { value: ethers.utils.parseEther(fees)});
+        return data;
+      } 
+  catch (error) 
+  {
+    console.error("Error calling paymentToVerifier:", error);
+  }
+}
+
 
   const getDonations = async (pId) => {
     const donations = await contract.call('getDonators', [pId]);
@@ -231,7 +327,7 @@ const getUsernameAddress = async (_username) => {
 
     for(let i = 0; i < numberOfDonations; i++) {
       parsedDonations.push({
-        donator: donations[0][i],
+        donator: donations[2][i],
         donation: ethers.utils.formatEther(donations[1][i].toString())
       })
     }
@@ -257,20 +353,28 @@ const getUsernameAddress = async (_username) => {
       value={{
         address,
         contract,
+        getApprovedDocs,
         connect,
+        getRejectedDocs,
         createCampaigns: publishCampaign,
         getCampaigns,
         getAllDocuments,
         getPendingDocs,
+        documentVerify,
         getUserCampaigns,
+        filterCampaignsByCategory,
         donate,
+        verifierPayment,
         getDonations,
         deleteCampaigns,
         registerUser,
+        isSignUp,
         loginUser,
+        passwordUpdate,
         getUsernameAddress,
         uploadUserDocument,
         loginVerifier,
+        getUserDocumentStatus,
       }}
     >
       {children}

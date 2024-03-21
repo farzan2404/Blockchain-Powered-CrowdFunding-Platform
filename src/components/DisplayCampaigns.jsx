@@ -1,18 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import FundCard from "./FundCard";
 import { loader } from "../assets";
+import "./index.css";
 
-const DisplayCampaigns = ({ title, isLoading, campaigns }) => {
+  const DisplayCampaigns = ({ title, isLoading, campaigns}) => {
   const navigate = useNavigate();
 
   const handleNavigate = (campaign) => {
     navigate(`/campaign-details/${campaign.title}`, { state: campaign });
   };
-
+  
   return (
     <div>
+
       <h1 className="font-epilogue font-semibold text-[18px] text-white text-left">
         {title} ({campaigns.length})
       </h1>

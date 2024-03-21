@@ -2,7 +2,7 @@ import createCampaign from './create-campaign.svg';
 import dashboard from './dashboard.svg';
 import logo from './logo.svg';
 import logout from './logout.svg';
-import payment from './payment.svg';
+import transaction from './payment.svg';
 import profile from './profile.svg';
 import sun from './sun.svg';
 import document from './document.svg';
@@ -19,7 +19,7 @@ export {
   dashboard,
   logo,
   logout,
-  payment,
+  transaction,
   profile,
   sun,
   document,

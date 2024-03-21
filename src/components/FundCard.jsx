@@ -4,13 +4,15 @@ import { tagType, thirdweb } from "../assets";
 import { daysLeft } from "../utils";
 
 const FundCard = ({
-  owner,
+  // owner,
+  name,
   title,
   description,
   target,
   deadline,
   amtCollected,
   image,
+  category,
   handleClick,
 }) => {
   const remainingDays = daysLeft(deadline);
@@ -29,6 +31,15 @@ const FundCard = ({
     <div
       className="sm:w-[288px] w-full rounded-[15px] bg-[#1c1c24] cursor-pointer"
       onClick={handleClick}
+      style={{
+      transition: "transform 0.2s ease-in-out",
+    }}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.transform = "scale(1.1)";
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.transform = "scale(1)";
+    }}
     >
 
       <img
@@ -44,6 +55,7 @@ const FundCard = ({
             alt="tag"
             className="w-[17px] h-[17px] object-contain"
           />
+          <p className="pl-4 text-white">{category}</p>
         </div>
 
         <div className="block">
@@ -80,7 +92,7 @@ const FundCard = ({
             />
           </div>
           <p className="flex-1 font-epilogue font-normal text-[12px] text-[#808191] truncate">
-            by <span className="text-[#b2b3bd]">{owner}</span>
+            by <span className="text-[#b2b3bd]">{name}</span>
           </p>
         </div>
       </div>
