@@ -1,0 +1,49 @@
+.dropzone-container {
+    background-color: aliceblue;
+    border: 2px dashed #eff7ff;
+    border-radius: 4px;
+    padding: 7px; 
+    text-align: center;
+    cursor: pointer;
+    margin-bottom: 10px;
+    width: 200px; /* Adjust the width to your desired length */
+}
+
+
+/* Define the animation */
+@keyframes fadeInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px); /* Start from 50px to the left */
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0); /* Move to the original position */
+  }
+}
+
+/* Apply the animation to elements with the styleIt class */
+.styleIt {
+  color: white;
+  font-size: 18px;
+  animation: fadeInFromLeft 2s ease-in-out;
+}
+
+
+
+
+.dropzone-text {
+    font-size: 22px;
+    color: rgb(13, 16, 27);
+    margin-top: 10px;
+}
+
+.dropzone-text:hover {
+    font-size: 22px;
+    color: rgb(245, 245, 245);
+    margin-top: 10px;
+}
+
+.dropzone-container:hover {
+    background-color: #121611;
+}
